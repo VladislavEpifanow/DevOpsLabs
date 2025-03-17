@@ -1,6 +1,6 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import axios from 'axios'
-import App from './App'
+import App from './App.tsx'
 import '@testing-library/jest-dom'
 
 jest.mock('axios')
