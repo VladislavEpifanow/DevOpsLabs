@@ -2,13 +2,13 @@
   "name": "client",
   "private": true,
   "version": "0.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest --no-cache --watchAll=false --ci --testPathIgnorePatterns=dist/ --testMatch=**/*.test.tsx"
+    "test": "jest --watchAll=false --ci"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -19,8 +19,6 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "^11.11.0",
-    "babel-plugin-module-resolver": "^5.0.0",
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
@@ -48,7 +46,6 @@
       "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
     },
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/src/$1",
       "\\.(css|scss)$": "identity-obj-proxy"
     },
     "testPathIgnorePatterns": [
