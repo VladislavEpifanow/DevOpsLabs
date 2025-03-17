@@ -3,7 +3,13 @@
     "types": ["jest", "node"],
     "lib": ["dom", "esnext"],
     "jsx": "react-jsx",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["src", "jest.config.js"]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
