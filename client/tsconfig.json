@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "types": ["jest", "node"],
+    "lib": ["dom", "esnext"],
+    "jsx": "react-jsx",
+    "esModuleInterop": true
+  },
+  "include": ["src", "jest.config.js"]
+}
