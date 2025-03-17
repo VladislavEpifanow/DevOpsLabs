@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest --watchAll=false --ci"
+    "test": "jest"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -40,16 +40,20 @@
     "vite": "^4.5.0"
   },
   "jest": {
-    "preset": "ts-jest",
     "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": [
-      "@testing-library/jest-dom"
-    ],
+    "setupFilesAfterEnv": ["@testing-library/jest-dom"],
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+    },
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy"
     },
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    }
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@mui|@emotion)"
+    ]
   }
 }
