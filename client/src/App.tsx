@@ -8,7 +8,8 @@ interface Book {
   author: string
 }
 
-const App = () => {
+// Изменено: добавлен default в объявление функции
+export default function App() {
   const [books, setBooks] = useState<Book[]>([])
   const [newBook, setNewBook] = useState({ title: '', author: '' })
   const [editingBook, setEditingBook] = useState<Book | null>(null)
@@ -36,7 +37,6 @@ const App = () => {
 
     try {
       if (editingBook) {
-        // Редактирование существующей книги
         const response = await axios.put(
           `http://localhost:8000/books/${editingBook.id}`,
           newBook
@@ -46,7 +46,6 @@ const App = () => {
         ))
         setEditingBook(null)
       } else {
-        // Добавление новой книги
         const response = await axios.post('http://localhost:8000/books/', newBook)
         setBooks([...books, response.data])
       }
@@ -147,5 +146,3 @@ const App = () => {
     </div>
   )
 }
-
-export default App
