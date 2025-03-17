@@ -7,75 +7,65 @@ on:
     branches: [main]
 
 jobs:
-  frontend-dependencies:
-    name: Frontend Dependencies
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client
+        working-directory: client  # Ключевое исправление!
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
       with:
-        node-version: '20.x'
+        fetch-depth: 0  # Важно для получения истории коммитов
+
+    - name: Verify lock file presence
+      run: |
+        ls -la
+        if [ ! -f "package-lock.json" ]; then
+          echo "##[error] package-lock.json not found in client directory!"
+          exit 1
+        fi
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
         cache: 'npm'
-    - run: npm ci
+        cache-dependency-path: client/package-lock.json  # Явное указание пути
 
-  frontend-build:
-    name: Frontend Build
-    needs: frontend-dependencies
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: client
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-    - run: npm run build
+    - name: Install dependencies
+      run: npm ci  # Требует наличия package-lock.json
 
-  frontend-test:
-    name: Frontend Tests
-    needs: frontend-dependencies
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: client
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-    - run: npm test -- --watchAll=false --ci
+    - name: Build project
+      run: npm run build
+
+    - name: Run tests
+      run: npm test -- --watchAll=false --ci
       env:
         CI: true
 
-  backend-build:
-    name: Backend Build
+  backend:
+    name: Backend
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: server
+
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
         python-version: '3.12'
         cache: 'pip'
-    - run: pip install -r requirements.txt
 
-  backend-test:
-    name: Backend Tests
-    needs: backend-build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: server
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
-    - run: pip install pytest
-    - run: pytest -v tests/
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: Run tests
+      run: pytest -v tests/
