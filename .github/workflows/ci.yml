@@ -42,7 +42,7 @@ jobs:
       run: npm run build
 
     - name: Run tests
-      run: npm test
+      run: npm test -- --watchAll=false --ci --testPathIgnorePatterns=dist/ --testMatch=**/*.test.tsx
       env:
         CI: true
 
