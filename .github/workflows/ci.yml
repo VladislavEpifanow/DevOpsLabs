@@ -7,20 +7,18 @@ on:
     branches: [main]
 
 jobs:
-  frontend-install:
-    name: Frontend Install
+  frontend-dependencies:
+    name: Install Frontend Dependencies
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: client
-
     steps:
     - uses: actions/checkout@v4
     
     - name: Setup Node.js 20.x
       uses: actions/setup-node@v4
       with:
-        cache-dependency-path: client/package-lock.json
         node-version: '20.x'
         cache: 'npm'
 
@@ -28,13 +26,12 @@ jobs:
       run: npm ci
 
   frontend-build:
-    name: Frontend Build
-    needs: frontend-install
+    name: Build Frontend
+    needs: frontend-dependencies
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: client
-
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -45,27 +42,22 @@ jobs:
       run: npm run build
 
   frontend-test:
-    name: Frontend Tests
-    needs: frontend-install
+    name: Test Frontend
+    needs: frontend-dependencies
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: client
-
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
         node-version: '20.x'
 
-    - name: Clean test artifacts
-      run: rm -rf dist/ build/ .jest-cache
-
     - name: Run tests
-      run: npm test -- --watchAll=false --ci --no-cache
+      run: npm test -- --watchAll=false --ci
       env:
         CI: true
-        NODE_OPTIONS: --experimental-vm-modules
 
   backend:
     name: Backend
@@ -73,11 +65,10 @@ jobs:
     defaults:
       run:
         working-directory: server
-
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python
+    - name: Set up Python 3.12
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
