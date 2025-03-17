@@ -7,21 +7,33 @@ on:
     branches: [main]
 
 jobs:
-  frontend-build:
-    name: Frontend Build
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client
+        working-directory: client  # Ключевое исправление!
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js 20.x
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Важно для получения истории коммитов
+
+    - name: Verify lock file presence
+      run: |
+        ls -la
+        if [ ! -f "package-lock.json" ]; then
+          echo "##[error] package-lock.json not found in client directory!"
+          exit 1
+        fi
+
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20.x'
+        node-version: 20.x
         cache: 'npm'
+        cache-dependency-path: client/package-lock.json
 
     - name: Install dependencies
       run: npm ci
@@ -29,27 +41,10 @@ jobs:
     - name: Build project
       run: npm run build
 
-  frontend-test:
-    name: Frontend Tests
-    needs: frontend-build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: client
-
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-
-    - name: Install dependencies
-      run: npm ci
-
     - name: Run tests
       run: npm test
+      env:
+        CI: true
 
   backend:
     name: Backend
@@ -61,10 +56,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Python
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
+        cache: 'pip'
 
     - name: Install dependencies
       run: |
