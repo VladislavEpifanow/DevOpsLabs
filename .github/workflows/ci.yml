@@ -7,62 +7,40 @@ on:
     branches: [main]
 
 jobs:
-  frontend-dependencies:
-    name: Install Frontend Dependencies
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client
+        working-directory: client  # Все команды выполняются в папке client
+
     steps:
     - uses: actions/checkout@v4
     
+    - name: Verify package-lock.json
+      run: |
+        pwd
+        ls -la
+        if [ ! -f "package-lock.json" ]; then
+          echo "##[error] package-lock.json not found!"
+          exit 1
+        fi
+
     - name: Setup Node.js 20.x
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
         cache: 'npm'
+        cache-dependency-path: client/package-lock.json  # Явный путь к lock-файлу
 
     - name: Install dependencies
-      run: |
-        cd client
-        npm ci
+      run: npm ci  # Использует client/package-lock.json
 
-
-  frontend-build:
-    name: Build Frontend
-    needs: frontend-dependencies
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: client
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        
     - name: Build project
-      run: |
-        cd client
-        npm run build
-
-  frontend-test:
-    name: Test Frontend
-    needs: frontend-dependencies
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: client
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
+      run: npm run build
 
     - name: Run tests
-      run: |
-        cd client
-        npm test -- --watchAll=false --ci
+      run: npm test -- --watchAll=false --ci
       env:
         CI: true
 
@@ -72,14 +50,14 @@ jobs:
     defaults:
       run:
         working-directory: server
+
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python 3.12
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
-        cache: 'pip'
 
     - name: Install dependencies
       run: |
