@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest --no-cache --watchAll=false --ci"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -50,10 +50,11 @@
     },
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/dist/"
+      "/dist/",
+      "/build/"
     ],
-    "transformIgnorePatterns": [
-      "/node_modules/(?!@mui|@emotion)"
+    "testMatch": [
+      "**/*.test.tsx"
     ]
   }
 }

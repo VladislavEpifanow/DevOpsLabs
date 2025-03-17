@@ -12,35 +12,28 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client  # Все команды выполняются в папке client
+        working-directory: client
 
     steps:
     - uses: actions/checkout@v4
     
-    - name: Verify package-lock.json
-      run: |
-        pwd
-        ls -la
-        if [ ! -f "package-lock.json" ]; then
-          echo "##[error] package-lock.json not found!"
-          exit 1
-        fi
-
-    - name: Setup Node.js 20.x
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20.x'
+        node-version: 20.x
         cache: 'npm'
-        cache-dependency-path: client/package-lock.json  # Явный путь к lock-файлу
 
     - name: Install dependencies
-      run: npm ci  # Использует client/package-lock.json
+      run: npm ci
 
     - name: Build project
       run: npm run build
 
+    - name: Clean build artifacts
+      run: rm -rf dist/ build/
+
     - name: Run tests
-      run: npm test -- --watchAll=false --ci
+      run: npm test
       env:
         CI: true
 
@@ -54,7 +47,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
