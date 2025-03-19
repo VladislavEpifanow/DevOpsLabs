@@ -42,7 +42,7 @@ def get_db():
 def create_book(book: BookCreate, db: Session = Depends(get_db)):
     db_book = models.Book(**book.model_dump())
     db.add(db_book)
-    db.commit()
+    db.commits()
     db.refresh(db_book)
     return db_book
 
