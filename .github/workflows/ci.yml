@@ -35,12 +35,6 @@ jobs:
     - name: Build project
       run: npm run build
 
-    - name: Save build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: frontend-build
-        path: client/dist
-
   build-backend:
     name: Build Backend
     runs-on: ubuntu-latest
@@ -75,12 +69,6 @@ jobs:
       with:
         node-version: '20.x'
 
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: frontend-build
-        path: client/dist
-
     - name: Run tests
       run: npm test -- --watchAll=false --ci
       env:
@@ -102,7 +90,9 @@ jobs:
         python-version: '3.12'
 
     - name: Install test dependencies
-      run: pip install pytest
+      run: |
+        pip install -r requirements.txt
+        pip install pytest
 
     - name: Run tests
       run: pytest -v tests/
