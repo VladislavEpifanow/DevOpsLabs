@@ -38,6 +38,7 @@ resource "yandex_compute_instance" "vm" {
 
   metadata = {
     ssh-keys = "ubuntu:${file("C:/Users/vepif/.ssh/yandex_cloud.pub")}"
+    user-data = "${file("C:/Users/vepif/DevOps/DevOpsLabs/cloud_terraform/cloud_init.yml")}" 
   }
 }
 

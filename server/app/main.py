@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
-from . import models, database
+from app import models, database 
 
 # Pydantic модели
 class BookCreate(BaseModel):
@@ -24,7 +24,7 @@ app = FastAPI()
 # CORS настройки
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Порт Vite
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

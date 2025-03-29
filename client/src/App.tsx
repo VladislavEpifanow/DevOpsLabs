@@ -8,7 +8,10 @@ interface Book {
   author: string
 }
 
-// Изменено: добавлен default в объявление функции
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000'
+})
+
 export default function App() {
   const [books, setBooks] = useState<Book[]>([])
   const [newBook, setNewBook] = useState({ title: '', author: '' })
@@ -21,7 +24,7 @@ export default function App() {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/books/')
+      const response = await api.get('/books/')
       setBooks(response.data)
     } catch (err) {
       setError('Failed to load books')
@@ -37,16 +40,13 @@ export default function App() {
 
     try {
       if (editingBook) {
-        const response = await axios.put(
-          `http://localhost:8000/books/${editingBook.id}`,
-          newBook
-        )
+        const response = await api.put(`/books/${editingBook.id}`, newBook)
         setBooks(books.map(book => 
           book.id === editingBook.id ? response.data : book
         ))
         setEditingBook(null)
       } else {
-        const response = await axios.post('http://localhost:8000/books/', newBook)
+        const response = await api.post('/books/', newBook)
         setBooks([...books, response.data])
       }
       setNewBook({ title: '', author: '' })
