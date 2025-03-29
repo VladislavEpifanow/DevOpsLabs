@@ -18,11 +18,11 @@ services:
       context: ./client
       dockerfile: Dockerfile
     volumes:
-      - ./client/src:/app/src      # Hot-reload для React
+      - ./client/src:/app/src     
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://backend:8000  # Внутри Docker-сети
+      - VITE_API_URL=http://backend:8000  
     depends_on:
       - backend
     networks:
@@ -33,4 +33,4 @@ networks:
     driver: bridge
 
 volumes:
-  db:  # Том для БД (необязательно, но полезно для продакшена)
+  db:  

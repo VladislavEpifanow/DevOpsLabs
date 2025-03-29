@@ -2,7 +2,6 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Установите зависимости системы
 RUN apt-get update && apt-get install -y \
     sqlite3 \
     gcc \
@@ -14,7 +13,6 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY ./app/ /app/app/
 
-# Создайте БД и настройте права
 RUN mkdir -p /app/db && \
     touch /app/db/library.db && \
     chmod 777 /app/db/library.db
