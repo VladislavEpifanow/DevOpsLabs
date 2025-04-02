@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 from app import models, database 
 
 # Pydantic модели
-class BookCreate(BaseModel):
+class BookCreate(BaseModels):
     title: str
     author: str
 
