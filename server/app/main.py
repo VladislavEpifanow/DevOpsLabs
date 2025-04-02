@@ -41,7 +41,7 @@ def get_db():
 @app.post("/books/", response_model=BookResponse)
 def create_book(book: BookCreate, db: Session = Depends(get_db)):
     db_book = models.Book(**book.model_dump())
-    db.add(db_books)
+    db.add(db_book)
     db.commit()
     db.refresh(db_book)
     return db_book
