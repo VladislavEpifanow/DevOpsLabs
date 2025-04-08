@@ -1,36 +1,33 @@
 services:
   backend:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    build: ./server
     volumes:
       - ./server/app:/app/app    
       - ./db:/app/db     
-    ports:
-      - "8000:8000"
     environment:
       - DATABASE_URL=sqlite:////app/db/library.db
     networks:
       - app-network
 
   frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    volumes:
-      - ./client/src:/app/src     
-    ports:
-      - "5173:5173"
+    build: ./client
     environment:
-      - VITE_API_URL=http://backend:8000  
+      - VITE_API_URL=/api
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - backend
+      - frontend
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  db:  

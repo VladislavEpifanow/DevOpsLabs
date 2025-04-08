@@ -7,6 +7,7 @@ interface Book {
   title: string
   author: string
 }
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function App() {
   const [books, setBooks] = useState<Book[]>([])
@@ -20,7 +21,7 @@ export default function App() {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/books/')
+      const response = await axios.get(`${API_URL}/books/`);
       setBooks(response.data)
     } catch (err) {
       setError('Failed to load books')
@@ -36,8 +37,8 @@ export default function App() {
 
     try {
       if (editingBook) {
-        const response = await axios.put(
-          `http://localhost:8000/books/${editingBook.id}`,
+         const response = await axios.put(
+          `${API_URL}/books/${editingBook.id}`,
           newBook
         )
         setBooks(books.map(book => 
@@ -45,7 +46,7 @@ export default function App() {
         ))
         setEditingBook(null)
       } else {
-        const response = await axios.post('http://localhost:8000/books/', newBook)
+        const response = await axios.post(`${API_URL}/books/`, newBook)
         setBooks([...books, response.data])
       }
       setNewBook({ title: '', author: '' })
@@ -67,7 +68,7 @@ export default function App() {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8000/books/${id}`)
+      await axios.delete(`${API_URL}/books/${id}`)
       setBooks(books.filter(book => book.id !== id))
     } catch (err) {
       setError('Failed to delete book')
