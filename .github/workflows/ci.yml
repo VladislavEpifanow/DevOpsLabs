@@ -137,22 +137,31 @@ jobs:
     needs: [test-frontend, test-backend]
     steps:
     - uses: actions/checkout@v4
+    
+    # Step to install Sonar Scanner
+    - name: Install SonarScanner
+      run: |
+        export SONAR_SCANNER_VERSION=4.7.0.2747
+        export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
+        curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+        unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
+        export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+        export SONAR_SCANNER_OPTS="-server"
+    
+    # Run SonarQube analysis for frontend
+    - name: Run SonarQube Analysis for Frontend
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=devopslabs-frontend \
+          -Dsonar.sources=client \
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}\
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-    # Step to set up SonarQube analysis using the action from SonarSource
-    - name: SonarQube Scan for Frontend
-      uses: SonarSource/sonarcloud-github-action@v1
-      with:
-        sonar-project-key: devopslabs-frontend
-        sonar-project-name: Frontend
-        sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
-        sonar-login: ${{ secrets.SONAR_TOKEN }}
-        project-dir: client
-
-    - name: SonarQube Scan for Backend
-      uses: SonarSource/sonarcloud-github-action@v1
-      with:
-        sonar-project-key: devopslabs-backend
-        sonar-project-name: Backend
-        sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
-        sonar-login: ${{ secrets.SONAR_TOKEN }}
-        project-dir: server
+    # Run SonarQube analysis for backend
+    - name: Run SonarQube Analysis for Backend
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=devopslabs-backend \
+          -Dsonar.sources=server \
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
