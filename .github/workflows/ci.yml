@@ -84,7 +84,11 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
-      
+    
+    - name: Set environment variable for testing
+      run: |
+        echo "VITE_API_URL=http://localhost:8000" >> .env
+        
     - name: Run tests with coverage
       run: npm test -- --coverage --watchAll=false --ci
       env:
