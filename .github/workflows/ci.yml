@@ -138,24 +138,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install SonarQube Scanner
-      run: |
-        curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-        unzip sonar-scanner.zip -d $HOME
-        export PATH=$HOME/sonar-scanner-4.6.2.2472-linux/bin:$PATH
+    # Step to set up SonarQube analysis using the action from SonarSource
+    - name: SonarQube Scan for Frontend
+      uses: SonarSource/sonarcloud-github-action@v1
+      with:
+        sonar-project-key: devopslabs-frontend
+        sonar-project-name: Frontend
+        sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
+        sonar-login: ${{ secrets.SONAR_TOKEN }}
+        project-dir: client
 
-    - name: Run SonarQube Scanner for Frontend
-      run: |
-        cd client
-        sonar-scanner \
-          -Dproject.settings=sonar-project.properties \
-          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-    - name: Run SonarQube Scanner for Backend
-      run: |
-        cd server
-        sonar-scanner \
-          -Dproject.settings=sonar-project.properties \
-          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+    - name: SonarQube Scan for Backend
+      uses: SonarSource/sonarcloud-github-action@v1
+      with:
+        sonar-project-key: devopslabs-backend
+        sonar-project-name: Backend
+        sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
+        sonar-login: ${{ secrets.SONAR_TOKEN }}
+        project-dir: server
