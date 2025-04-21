@@ -23,6 +23,11 @@ spec:
           volumeMounts:
             - name: db-volume
               mountPath: /app/db
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "250m"
       volumes:
         - name: db-volume
           emptyDir: {}  # временное хранилище. Для персистентного - используйте PVC
