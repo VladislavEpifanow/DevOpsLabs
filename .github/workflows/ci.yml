@@ -97,7 +97,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: frontend-coverage
-        path: client/coverage
+        path: client/coverage/lcov.info
 
 
   test-backend:
