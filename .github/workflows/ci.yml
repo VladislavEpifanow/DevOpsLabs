@@ -162,7 +162,7 @@ jobs:
             -Dsonar.exclusions=**/node_modules/**,**/public/**
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
   sonarqube-backend:
     name: SonarQube Analysis - Backend
@@ -181,7 +181,10 @@ jobs:
         with:
           name: backend-coverage
           path: .
-  
+      - name: Debug Env Variables
+        run: |
+          echo "SONAR_HOST_URL=${SONAR_HOST_URL}"
+          echo "SONAR_TOKEN is set: [${{ secrets.SONAR_TOKEN != '' }}]"
       - name: SonarQube Scan Backend
         uses: SonarSource/sonarqube-scan-action@v5.1.0
         with:
@@ -194,4 +197,4 @@ jobs:
             -Dsonar.coverage.exclusions=**/tests/**
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
