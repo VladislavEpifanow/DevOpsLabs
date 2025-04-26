@@ -155,6 +155,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=devopslabs-frontend
+            -Dsonar.projectBaseDir=client
             -Dsonar.sources=.
             -Dsonar.tests=.
             -Dsonar.test.inclusions=**/*.test.tsx,**/*.test.ts
