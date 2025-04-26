@@ -134,6 +134,7 @@ jobs:
   sonarqube-frontend:
     name: SonarQube Analysis - Frontend
     runs-on: ubuntu-latest
+    environment: devopslabs
     needs: [test-frontend]
     defaults:
       run:
@@ -167,6 +168,7 @@ jobs:
   sonarqube-backend:
     name: SonarQube Analysis - Backend
     runs-on: ubuntu-latest
+    environment: devopslabs
     needs: [test-backend]
     defaults:
       run:
