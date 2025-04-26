@@ -93,11 +93,17 @@ jobs:
       run: npm test -- --coverage --watchAll=false --ci
       env:
         CI: true
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v4
+        
+    - name: Download frontend coverage report
+      uses: actions/download-artifact@v4
       with:
         name: frontend-coverage
-        path: client/coverage/lcov.info
+        path: coverage
+    
+    - name: Move coverage report
+      run: |
+        mkdir -p coverage
+        mv coverage/lcov.info coverage/lcov.info
 
 
   test-backend:
