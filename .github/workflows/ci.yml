@@ -94,16 +94,11 @@ jobs:
       env:
         CI: true
         
-    - name: Download frontend coverage report
-      uses: actions/download-artifact@v4
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
       with:
         name: frontend-coverage
-        path: coverage
-    
-    - name: Move coverage report
-      run: |
-        mkdir -p coverage
-        mv coverage/lcov.info coverage/lcov.info
+        path: client/coverage/lcov.info
 
 
   test-backend:
@@ -142,20 +137,22 @@ jobs:
     runs-on: ubuntu-latest
     environment: devopslabs
     needs: [test-frontend]
-    defaults:
-      run:
-        working-directory: client
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-  
+
       - name: Download frontend coverage report
         uses: actions/download-artifact@v4
         with:
           name: frontend-coverage
-          path: coverage
-  
+          path: temp-coverage
+
+      - name: Move coverage report to correct location
+        run: |
+          mkdir -p client/coverage
+          mv temp-coverage/lcov.info client/coverage/lcov.info
+
       - name: SonarQube Scan Frontend
         uses: SonarSource/sonarqube-scan-action@v5.1.0
         with:
