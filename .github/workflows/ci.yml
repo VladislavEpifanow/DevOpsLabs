@@ -131,15 +131,67 @@ jobs:
         name: backend-coverage
         path: server/coverage.xml
   
-  sonarqube:
+  sonarqube-frontend:
+    name: SonarQube Analysis - Frontend
     runs-on: ubuntu-latest
+    needs: [test-frontend]
+    defaults:
+      run:
+        working-directory: client
     steps:
-    - uses: actions/checkout@v4
-      with:
-        # Disabling shallow clones is recommended for improving the relevancy of reporting
-        fetch-depth: 0
-    - name: SonarQube Scan
-      uses: SonarSource/sonarqube-scan-action@v5.1.0
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+  
+      - name: Download frontend coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage
+          path: coverage
+  
+      - name: SonarQube Scan Frontend
+        uses: SonarSource/sonarqube-scan-action@v5.1.0
+        with:
+          args: >
+            -Dsonar.projectKey=devopslabs-frontend
+            -Dsonar.sources=.
+            -Dsonar.tests=.
+            -Dsonar.test.inclusions=**/*.test.tsx,**/*.test.ts
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.coverage.exclusions=**/node_modules/**
+            -Dsonar.exclusions=**/node_modules/**,**/public/**
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+
+  sonarqube-backend:
+    name: SonarQube Analysis - Backend
+    runs-on: ubuntu-latest
+    needs: [test-backend]
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+  
+      - name: Download backend coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage
+          path: .
+  
+      - name: SonarQube Scan Backend
+        uses: SonarSource/sonarqube-scan-action@v5.1.0
+        with:
+          args: >
+            -Dsonar.projectKey=devopslabs-backend
+            -Dsonar.sources=.
+            -Dsonar.tests=tests
+            -Dsonar.test.inclusions=tests/**/*.py
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.coverage.exclusions=**/tests/**
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
