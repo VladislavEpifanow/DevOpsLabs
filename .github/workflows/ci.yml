@@ -191,6 +191,8 @@ jobs:
       - name: SonarQube Scan Backend
         uses: SonarSource/sonarqube-scan-action@v5.1.0
         with:
+          host-url: ${{ secrets.SONAR_HOST_URL }}
+          token: ${{ secrets.SONAR_TOKEN }}
           args: >
             -Dsonar.projectKey=devopslabs-backend
             -Dsonar.sources=.
@@ -198,6 +200,3 @@ jobs:
             -Dsonar.test.inclusions=tests/**/*.py
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.coverage.exclusions=**/tests/**
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
