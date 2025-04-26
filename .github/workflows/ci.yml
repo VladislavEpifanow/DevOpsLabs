@@ -189,12 +189,12 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=devopslabs-backend
+            -Dsonar.projectBaseDir=server
             -Dsonar.sources=.
             -Dsonar.tests=tests
             -Dsonar.test.inclusions=tests/**/*.py
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.coverage.exclusions=tests/**
             -Dsonar.exclusions=tests/**
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          host-url: ${{ secrets.SONAR_HOST_URL }}
+          token: ${{ secrets.SONAR_TOKEN }}
