@@ -1,10 +1,6 @@
-export function getApiUrl(): string {
-    if (process.env.NODE_ENV === 'test') {
-      return "http://localhost:8000";
-    }
-    if (typeof window !== "undefined") {
-      return import.meta.env.VITE_API_URL || "http://localhost:8000";
-    }
-    return "http://localhost:8000";
-  }
-  
+// src/config.ts
+
+// В тестах будем мапить на config.mock.ts через moduleNameMapper
+import { API_URL } from './config.real';
+
+export { API_URL };

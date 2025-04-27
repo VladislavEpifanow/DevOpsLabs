@@ -7,11 +7,10 @@ interface Book {
   title: string
   author: string
 }
-import { getApiUrl } from './config';
 
-const API_URL = getApiUrl();
+import { API_URL } from './config';
 
-// const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+console.log(API_URL); // ✅
 
 export default function App() {
   const [books, setBooks] = useState<Book[]>([])
