@@ -168,12 +168,19 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      - name: Wait for Quality Gate result
-        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Check Quality Gate status
+        run: |
+          echo "Waiting for SonarQube to finish analysis..."
+          sleep 15
+  
+          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=devopslabs-frontend" | jq -r '.projectStatus.status')
+  
+          echo "Quality Gate status: $STATUS"
+  
+          if [ "$STATUS" != "OK" ]; then
+            echo "::error::Quality Gate failed with status: $STATUS"
+            exit 1
+          fi
 
   sonarqube-backend:
     name: SonarQube Analysis - Backend
@@ -210,9 +217,16 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       
-      - name: Wait for Quality Gate result
-        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Check Quality Gate status
+        run: |
+          echo "Waiting for SonarQube to finish analysis..."
+          sleep 15
+  
+          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=devopslabs-frontend" | jq -r '.projectStatus.status')
+  
+          echo "Quality Gate status: $STATUS"
+  
+          if [ "$STATUS" != "OK" ]; then
+            echo "::error::Quality Gate failed with status: $STATUS"
+            exit 1
+          fi
