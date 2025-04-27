@@ -93,11 +93,12 @@ jobs:
       run: npm test -- --coverage --watchAll=false --ci
       env:
         CI: true
+        
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
       with:
         name: frontend-coverage
-        path: client/coverage
+        path: client/coverage/lcov.info
 
 
   test-backend:
@@ -136,20 +137,22 @@ jobs:
     runs-on: ubuntu-latest
     environment: devopslabs
     needs: [test-frontend]
-    defaults:
-      run:
-        working-directory: client
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-  
+
       - name: Download frontend coverage report
         uses: actions/download-artifact@v4
         with:
           name: frontend-coverage
-          path: coverage
-  
+          path: temp-coverage
+
+      - name: Move coverage report to correct location
+        run: |
+          mkdir -p client/coverage
+          mv temp-coverage/lcov.info client/coverage/lcov.info
+
       - name: SonarQube Scan Frontend
         uses: SonarSource/sonarqube-scan-action@v5.1.0
         with:
@@ -165,6 +168,19 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Check Quality Gate status
+        run: |
+          echo "Waiting for SonarQube to finish analysis..."
+          sleep 15
+  
+          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=devopslabs-frontend" | jq -r '.projectStatus.status')
+  
+          echo "Quality Gate status: $STATUS"
+  
+          if [ "$STATUS" != "OK" ]; then
+            echo "::error::Quality Gate failed with status: $STATUS"
+            exit 1
+          fi
 
   sonarqube-backend:
     name: SonarQube Analysis - Backend
@@ -200,3 +216,17 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      
+      - name: Check Quality Gate status
+        run: |
+          echo "Waiting for SonarQube to finish analysis..."
+          sleep 15
+  
+          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=devopslabs-frontend" | jq -r '.projectStatus.status')
+  
+          echo "Quality Gate status: $STATUS"
+  
+          if [ "$STATUS" != "OK" ]; then
+            echo "::error::Quality Gate failed with status: $STATUS"
+            exit 1
+          fi
