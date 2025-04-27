@@ -1,7 +1,7 @@
 name: CD Pipeline
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:  
 
 jobs:
   deploy:
@@ -43,13 +43,18 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
           chmod 600 ~/.kube/config
+      
+      - name: Create Persistent Volume Claim
+        run: |
+            kubectl apply -f k8s/backend-pvc.yaml
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/ --validate=false
-
+            kubectl apply -f k8s/ --validate=false
+      
       - name: Restart Deployments to pull latest images
         run: |
-          kubectl rollout restart deployment frontend
-          kubectl rollout restart deployment backend
-          kubectl rollout restart deployment nginx
+            kubectl rollout restart deployment frontend
+            kubectl rollout restart deployment backend
+            kubectl rollout restart deployment nginx
+        
