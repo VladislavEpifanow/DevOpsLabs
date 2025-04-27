@@ -20,6 +20,9 @@ spec:
           env:
             - name: DATABASE_URL
               value: "sqlite:////app/db/library.db"
+          envFrom:
+            - secretRef:
+                name: telegram-secret
           volumeMounts:
             - name: db-volume
               mountPath: /app/db
@@ -30,4 +33,4 @@ spec:
               cpu: "250m"
       volumes:
         - name: db-volume
-          emptyDir: {}  # временное хранилище. Для персистентного - используйте PVC
+          emptyDir: {}
