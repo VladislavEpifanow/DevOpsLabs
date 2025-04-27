@@ -5,7 +5,10 @@ services:
       - ./server/app:/app/app    
       - ./db:/app/db     
     environment:
+      - ENV=production
       - DATABASE_URL=sqlite:////app/db/library.db
+    env_file:
+      - ./server/.env
     networks:
       - app-network
 
