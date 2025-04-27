@@ -163,20 +163,18 @@ jobs:
             -Dsonar.tests=.
             -Dsonar.test.inclusions=**/*.test.tsx,**/*.test.ts
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.coverage.exclusions=**/node_modules/**
-            -Dsonar.exclusions=**/node_modules/**,**/public/**
+            -Dsonar.coverage.exclusions=**/node_modules/**,**/*.test.tsx,**/*.test.ts,src/config.mock.ts,src/setupTests.ts
+            -Dsonar.exclusions=**/node_modules/**,**/public/**,src/config.mock.ts,src/setupTests.ts
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
       - name: Check Quality Gate status
         run: |
           echo "Waiting for SonarQube to finish analysis..."
           sleep 15
-  
           STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=devopslabs-frontend" | jq -r '.projectStatus.status')
-  
           echo "Quality Gate status: $STATUS"
-  
           if [ "$STATUS" != "OK" ]; then
             echo "::error::Quality Gate failed with status: $STATUS"
             exit 1
@@ -194,13 +192,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-  
+
       - name: Download backend coverage report
         uses: actions/download-artifact@v4
         with:
           name: backend-coverage
           path: .
-  
+
       - name: SonarQube Scan Backend
         uses: SonarSource/sonarqube-scan-action@v5.1.0
         with:
@@ -216,16 +214,13 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      
+
       - name: Check Quality Gate status
         run: |
           echo "Waiting for SonarQube to finish analysis..."
           sleep 15
-  
-          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=devopslabs-frontend" | jq -r '.projectStatus.status')
-  
+          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=devopslabs-backend" | jq -r '.projectStatus.status')
           echo "Quality Gate status: $STATUS"
-  
           if [ "$STATUS" != "OK" ]; then
             echo "::error::Quality Gate failed with status: $STATUS"
             exit 1
