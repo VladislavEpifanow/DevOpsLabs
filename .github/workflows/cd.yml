@@ -1,7 +1,7 @@
 name: CD Pipeline
 
 on:
-  workflow_dispatch:  # Только ручной запуск через GitHub Actions
+  workflow_dispatch: 
 
 jobs:
   deploy:
