@@ -1,15 +1,15 @@
 name: CD Pipeline
 
 on:
-  workflow_dispatch:  # Позволяет запустить вручную из GitHub интерфейса
+  workflow_dispatch:  # Ручной запуск
   workflow_run:
-    workflows: ["CI Pipeline"]  # Название твоего CI
+    workflows: ["CI Pipeline"]  # Запускается после CI Pipeline
     types:
       - completed
 
 jobs:
   deploy:
-    name: Deploy to Kubernetes
+    name: Build, Push and Deploy
     runs-on: ubuntu-latest
     environment: devopslabs
 
@@ -28,12 +28,12 @@ jobs:
 
     - name: Build and push frontend image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devopslabs-frontend:latest ./client
+        docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/devopslabs-frontend:latest ./client
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/devopslabs-frontend:latest
 
     - name: Build and push backend image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devopslabs-backend:latest ./server
+        docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/devopslabs-backend:latest ./server
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/devopslabs-backend:latest
 
     - name: Install kubectl
