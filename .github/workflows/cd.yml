@@ -46,7 +46,7 @@ jobs:
       
       - name: Create Persistent Volume Claim
         run: |
-            kubectl apply -f k8s/backend-pvc.yaml
+            kubectl apply -f k8s/backend-pvc.yaml --validate=false
 
       - name: Deploy to Kubernetes
         run: |
