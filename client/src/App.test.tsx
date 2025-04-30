@@ -25,7 +25,7 @@ describe('Book Library Application', () => {
     render(<App />)
     
     // Проверяем заголовок
-    expect(await screen.findByText('Book Library')).toBeInTheDocument()
+    expect(await screen.findByText('My Library')).toBeInTheDocument()
     
     // Проверяем отображение всех книг
     await waitFor(() => {

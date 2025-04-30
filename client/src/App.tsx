@@ -10,7 +10,7 @@ interface Book {
 
 import { API_URL } from './config';
 
-console.log(API_URL); // ✅
+console.log(API_URL); 
 
 export default function App() {
   const [books, setBooks] = useState<Book[]>([])
@@ -80,7 +80,7 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <h1 className="books-header">Book Library</h1>
+      <h1 className="books-header">My Library</h1>
 
       <form className="add-book-form" onSubmit={handleSubmit}>
         <div className="form-row">
